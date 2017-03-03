@@ -1,0 +1,11 @@
+node_modules
+*.patch
+*.err
+*.log
+*.orig
+*.vi
+*.zip
+.DS_Store
+*~
+._*
+.env
