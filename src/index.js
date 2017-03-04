@@ -1,7 +1,7 @@
 'use strict';
 
-const htmlparser = require("htmlparser2")
-const svgo = require('svgo')
+import htmlparser from 'htmlparser2'
+import svgo from 'svgo'
 
 const filterTags = node => node.filter(node => 
   node.type === 'tag' || (

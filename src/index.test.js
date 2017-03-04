@@ -1,5 +1,5 @@
-const expect = require('chai').expect
-const svgson = require('./index')
+import { expect } from 'chai'
+import svgson from './index'
 
 const SVG = '<svg viewBox="0 0 100 100" width="100" height="100"><circle r="15" data-name="stroke" stroke-linecap="round" /></svg>';
 const expected = {
