@@ -36,12 +36,12 @@
     "mocha": "3.2.0",
     "semantic-release": "^6.3.2"
   },
-  "czConfig": {
-    "path": "node_modules/cz-conventional-changelog"
-  },
   "config": {
     "ghooks": {
       "pre-commit": "npm run test:single"
+    },
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog"
     }
   }
 }
