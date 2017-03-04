@@ -5,8 +5,9 @@
   "main": "src/index.js",
   "scripts": {
     "commit": "git-cz",
+    "report-coverage": "cat ./coverage/lcov.info | codecov",
     "test": "mocha src/index.test.js -w",
-    "test:single": "mocha src/index.test.js",
+    "test:single": "nyc --reporter=lcov --reporter=text mocha src/index.test.js",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "repository": {
@@ -30,10 +31,12 @@
   },
   "devDependencies": {
     "chai": "3.5.0",
+    "codecov.io": "0.1.6",
     "commitizen": "2.9.6",
     "cz-conventional-changelog": "2.0.0",
     "ghooks": "2.0.0",
     "mocha": "3.2.0",
+    "nyc": "10.1.2",
     "semantic-release": "^6.3.2"
   },
   "config": {
@@ -43,5 +46,15 @@
     "commitizen": {
       "path": "node_modules/cz-conventional-changelog"
     }
+  },
+  "nyc": {
+    "lines": 60,
+    "statements": 50,
+    "functions": 50,
+    "branches": 50,
+    "check-coverage": true,
+    "exclude": [
+      "**/*.test.js"
+    ]
   }
 }
