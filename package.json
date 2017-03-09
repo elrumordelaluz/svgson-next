@@ -7,7 +7,7 @@
     "commit": "git-cz",
     "report-coverage": "cat ./coverage/lcov.info | codecov",
     "test:watch": "npm t -- -w",
-    "test": "mocha src/index.test.js --compilers js:babel-register",
+    "test": "mocha src/*.test.js --require babel-register",
     "cover": "nyc --reporter=lcov --reporter=text npm t",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
     "prebuild": "rimraf dist",
@@ -37,6 +37,7 @@
   "homepage": "https://github.com/elrumordelaluz/svgson-next#readme",
   "dependencies": {
     "htmlparser2": "3.9.2",
+    "omit-deep": "0.3.0",
     "svgo": "0.7.2"
   },
   "devDependencies": {
