@@ -16,7 +16,6 @@ export default {
   module: {
     loaders: [
       { test: /\.js$/, loader: 'babel-loader', include },
-      { test: /\.json$/, loader: 'json-loader', include },
     ],
   }
 } 
