@@ -1,12 +1,9 @@
 import htmlparser from 'htmlparser2'
-import omitDeep from 'omit-deep'
 import * as t from './tools'
 
-const svgson = function svgson (input) {
+const svgson = function svgson (input, options) {
   const parsed = htmlparser.parseDOM(input, { xmlMode: true })
-  const svgs = parsed.filter(t.filterSVG)
-  
-  const cl = svgs.map(t.filterAttrs)
+  const svgs = parsed.filter(t.getOnlySvg).map(t.removeAttrs)
   
   return svgs.length
 }
