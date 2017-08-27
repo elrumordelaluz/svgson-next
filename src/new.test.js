@@ -1,7 +1,7 @@
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import svgson from './new'
-import svgsonOld from 'svgson'
+import _svgson from 'svgson'
 
 const expect = chai.expect
 chai.use(chaiAsPromised)
@@ -106,31 +106,35 @@ describe('svgson 2.0.0', () => {
     })
   })
 
-  it('Adds custom attributes', () => {
+  it('Adds custom attributes', (done) => {
     svgson(SVG, {
       customAttrs: {
         foo: 'bar',
-        test: true,
+        test: false,
       },
     }).then(([res]) => {
       expect(res).to.include.keys('foo', 'test')
       expect(res).to.have.property('foo', 'bar')
-      expect(res).to.have.property('test', true)
+      expect(res).to.have.property('test', false)
       expect(res).to.eql(
         Object.assign({}, expected[0], {
           foo: 'bar',
-          test: true,
+          test: false,
         })
       )
-    })
+      done()
+    }).catch(done)
   })
-  
-  it('Works in compat mode', () => {
-    svgson(SVG).then(([res]) => {
-      svgsonOld(SVG, {}, resOld => {
-        console.log(resOld, res);
+
+  it('Works in compat mode', done => {
+    svgson(SVG, { compat: true })
+      .then(([res]) => {
+        expect(res).to.include.keys('attrs', 'childs')
+        _svgson(SVG, {}, old => {
+          expect(res).to.deep.equal(old)
+        })
+        done()
       })
-    })
+      .catch(done)
   })
-  
 })

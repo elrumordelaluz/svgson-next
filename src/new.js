@@ -8,6 +8,8 @@ const svgson = function svgson(
     svgoConfig = t.svgoDefaultConfig,
     pathsKey = '',
     customAttrs = null,
+    compat = false,
+    camelcase = false,
   } = {}
 ) {
   const optimizer = input => {
@@ -19,21 +21,29 @@ const svgson = function svgson(
   }
 
   const applyFilters = input => {
+    const applyPathsKey = node =>
+      pathsKey !== '' ? t.wrapInKey(pathsKey, node) : node
+    const applyCustomAttrs = node =>
+      customAttrs ? t.addCustomAttrs(customAttrs, node) : node
+    const applyCompatMode = node => (compat ? t.compat(node) : node)
+    const applyCamelcase = node =>
+      camelcase || compat ? t.camelize(node) : node
+
     const result = input
       .filter(t.getOnlySvg)
       .map(t.removeAttrs)
-      .map(node => {
-        return pathsKey !== '' ? t.wrapInKey(pathsKey, node) : node
-      })
-      .map(node => {
-        return customAttrs ? t.addCustomAttrs(customAttrs, node) : node
-      })
+      .map(applyCompatMode)
+      .map(applyPathsKey)
+      .map(applyCustomAttrs)
+      .map(applyCamelcase)
 
     return Promise.resolve(result)
   }
 
   const haveResult = input =>
-    input.length > 0 ? Promise.resolve(input) : Promise.reject('No result produced')
+    input.length > 0
+      ? Promise.resolve(input)
+      : Promise.reject('No result produced')
 
   return optimizer(input).then(parseInput).then(applyFilters).then(haveResult)
 }
