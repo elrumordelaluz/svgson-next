@@ -1,103 +1,154 @@
-import { expect } from 'chai'
+import chai from 'chai'
+import chaiAsPromised from 'chai-as-promised'
 import svgson from './index'
+import _svgson from 'svgson'
 
-const SVG = '<svg viewBox="0 0 100 100" width="100" height="100"><circle r="15" data-name="stroke" stroke-linecap="round" /></svg>';
-const expected = {
-  name: 'svg',
-  attrs: { width: '100', height: '100', viewBox: '0 0 100 100' },
-  childs: [
-    {
-      name: 'circle',
-      attrs: { r: '15', 'data-name': 'stroke', 'strokeLinecap': 'round' }
-    }
-  ]
-};
+const expect = chai.expect
+chai.use(chaiAsPromised)
+chai.should()
 
-const expected2 = {
-  name: 'svg',
-  attrs: { viewBox: '0 0 100 100' },
-  childs: [
-    {
-      name: 'circle',
-      attrs: { r: '15', 'data-name': 'stroke' }
-    }
-  ]
-};
+const SVG =
+  '<svg viewBox="0 0 100 100" width="100" height="100"><circle r="15" data-name="stroke" stroke-linecap="round" /></svg>'
 
-describe('svgson', () => {
+const expected = [
+  {
+    type: 'tag',
+    name: 'svg',
+    attribs: { width: '100', height: '100', viewBox: '0 0 100 100' },
+    children: [
+      {
+        type: 'tag',
+        name: 'circle',
+        attribs: { r: '15', 'data-name': 'stroke', 'stroke-linecap': 'round' },
+        children: [],
+      },
+    ],
+  },
+]
 
-  it('returns an Object', () => {
-    svgson(SVG, {}, res => {
-      expect(res).to.be.an('object');
-      expect(res).to.eql(expected);
-    });
-  });
+const expectedOptimized = [
+  {
+    type: 'tag',
+    name: 'svg',
+    attribs: { width: '100', height: '100', viewBox: '0 0 100 100' },
+    children: [
+      {
+        type: 'tag',
+        name: 'circle',
+        attribs: { r: '15', 'data-name': 'stroke' },
+        children: [],
+      },
+    ],
+  },
+  {
+    type: 'tag',
+    name: 'svg',
+    attribs: { viewBox: '0 0 100 100' },
+    children: [
+      {
+        type: 'tag',
+        name: 'circle',
+        attribs: { r: '15', 'data-name': 'stroke' },
+        children: [],
+      },
+    ],
+  },
+]
 
-  it('has basic keys', () => {
-    svgson(SVG, {}, res => {
-      expect(res).to.include.keys('attrs', 'childs', 'name');
-    });
-  });
+describe('svgson-next', () => {
+  it('Fullfill a Promise', done => {
+    svgson(SVG).should.be.fulfilled.notify(done)
+  })
 
-  it('adds title key', () => {
-    svgson(SVG, {
-        title: 'mySVG'
-      }, res => {
-        expect(res).to.have.property('title', 'mySVG');
-    });
-  });
+  it('Reject a Promise', done => {
+    svgson('abc').should.be.rejected.notify(done)
+  })
 
-  it('wrap output in pathKey', () => {
-    svgson(SVG, {
-        pathsKey: 'paths'
-      }, res => {
-        expect(res).to.include.key('paths');
+  it('Returns an Array', done => {
+    svgson(SVG).should.eventually.be.an.instanceOf(Array).notify(done)
+  })
+
+  it('Resulted nodes has basic keys', done => {
+    svgson(SVG)
+      .then(([res]) => {
+        expect(res).to.include.keys('name', 'attribs', 'children')
+        done()
+      })
+      .catch(done)
+  })
+
+  it('Wrap nodes in pathKey', done => {
+    svgson(SVG, { pathsKey: 'paths' })
+      .then(([res]) => {
+        expect(res).to.include.key('paths')
         expect(res).to.eql({
-          paths: expected
-        });
-    });
-  });
+          paths: expected[0],
+        })
+        done()
+      })
+      .catch(done)
+  })
 
-  it('adds custom attributes', () => {
+  it('Optimize using default config', done => {
+    svgson(SVG, { optimize: true })
+      .then(([res]) => {
+        expect(res).to.eql(expectedOptimized[0])
+        done()
+      })
+      .catch(done)
+  })
+
+  it('Optimize using custom config', done => {
     svgson(SVG, {
-        customAttrs: {
-          foo: 'bar',
-          test: true
-        }
-      }, res => {
-        expect(res).to.include.keys('foo', 'test');
-        expect(res).to.have.property('foo', 'bar');
-        expect(res).to.have.property('test', true);
-        expect(res).to.eql(Object.assign({}, expected, {
-          foo: 'bar',
-          test: true
-        }));
-    });
-  });
+      optimize: true,
+      svgoConfig: {
+        plugins: [
+          {
+            removeAttrs: {
+              attrs: '(width|height)',
+            },
+          },
+        ],
+      },
+    })
+      .then(([res]) => {
+        expect(res).to.eql(expectedOptimized[1])
+        done()
+      })
+      .catch(done)
+  })
 
-  it('optimize with svgo', () => {
+  it('Adds custom attributes', done => {
     svgson(SVG, {
-        svgo: true
-      }, res => {
-        expect(res).not.to.eql(expected);
-        expect(res).not.to.have.deep.property("childs[0].attrs.stroke-linecap");
-    });
-  });
+      customAttrs: {
+        foo: 'bar',
+        test: false,
+      },
+    })
+      .then(([res]) => {
+        expect(res).to.include.keys('foo', 'test')
+        expect(res).to.have.property('foo', 'bar')
+        expect(res).to.have.property('test', false)
+        expect(res).to.eql(
+          Object.assign({}, expected[0], {
+            foo: 'bar',
+            test: false,
+          })
+        )
+        done()
+      })
+      .catch(done)
+  })
 
-  it('optimize with svgo and custom plugins', () => {
-    svgson(SVG, {
-        svgo: true,
-        svgoConfig: {
-          plugins: [
-            { removeAttrs: {
-                attrs: '(width|height)'
-              }
-            }
-          ]
-        }
-      }, res => {
-        expect(res).to.eql(expected2);
-    });
-  });
-
-});
+  it('Works in compat mode', done => {
+    svgson(SVG, { compat: true })
+      .then(([res]) => {
+        expect(res).to.include.keys('attrs', 'childs')
+        _svgson(SVG, {}, old => {
+          expect(res).to.deep.equal(old)
+        })
+        done()
+      })
+      .catch(done)
+  })
+})

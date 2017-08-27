@@ -1,116 +1,53 @@
-'use strict';
-
 import htmlparser from 'htmlparser2'
-import svgo from 'svgo'
+import * as t from './tools'
 
-const filterTags = node => node.filter(node => 
-  node.type === 'tag' || (
-    node.type === 'text' && /([^\s])/.test(node.data)
-  )
-)
-
-const setRoot = (source) => {
-  if (Array.isArray(source)) {
-    const onlyTag = filterTags(source);
-    return onlyTag.length === 1 ? onlyTag[0] : onlyTag;
+const svgson = function svgson(
+  input,
+  {
+    optimize = false,
+    svgoConfig = t.svgoDefaultConfig,
+    pathsKey = '',
+    customAttrs = null,
+    compat = false,
+    camelcase = false,
+  } = {}
+) {
+  const optimizer = input => {
+    return optimize ? t.optimizeSVG(input, svgoConfig) : Promise.resolve(input)
   }
 
-  return source;
+  const parseInput = input => {
+    return Promise.resolve(htmlparser.parseDOM(input, { xmlMode: true }))
+  }
+
+  const applyFilters = input => {
+    const applyPathsKey = node =>
+      pathsKey !== '' ? t.wrapInKey(pathsKey, node) : node
+    const applyCustomAttrs = node =>
+      customAttrs ? t.addCustomAttrs(customAttrs, node) : node
+    const applyCompatMode = node => (compat ? t.compat(node) : node)
+    const applyCamelcase = node =>
+      camelcase || compat ? t.camelize(node) : node
+
+    const result = input
+      .filter(t.getOnlySvg)
+      .map(t.removeAttrs)
+      .map(applyCompatMode)
+      .map(applyPathsKey)
+      .map(applyCustomAttrs)
+      .map(applyCamelcase)
+
+    return Promise.resolve(result)
+  }
+
+  const haveResult = input =>
+    input.length > 0
+      ? Promise.resolve(input)
+      : Promise.reject('No result produced')
+
+  return optimizer(input).then(parseInput).then(applyFilters).then(haveResult)
 }
 
-const camelCase = (prop) => {
-  return prop.replace(/[-|:]([a-z])/gi, (all, letter) => letter.toUpperCase());
-};
+const processInput = input => {}
 
-const isDataAttr = (prop) => /^data(-\w+)/.test(prop)
-
-const generate = (source) => {
-  const root = setRoot(source);
-  let obj = {};
-
-  if (Array.isArray(root)) {
-    return root.map(node => generate(node))
-  }
-
-  if (root.type === 'tag') {
-    obj.name = root.name;
-
-    if (root.attribs) {
-      obj.attrs = {}
-      for (var attr in root.attribs) {
-        if (root.attribs.hasOwnProperty(attr)) {
-          obj.attrs[
-            isDataAttr(attr) 
-            ? attr 
-            : camelCase(attr)
-          ] = root.attribs[attr]
-        }
-      }
-    }
-
-    if (root.children) {
-      obj.childs = filterTags(root.children).map(node => generate(node));
-      if (!obj.childs.length)
-        delete obj.childs
-    }
-  } else if (root.type === 'text') {
-    obj.text = root.data;
-  }
-
-  return obj;
-}
-
-const optimize = (should, input, plugins, callback) => {
-  should ? new svgo(plugins).optimize(input, result => callback(result.data)) : callback(input);
-};
-
-const parseAndGenerate = (input, callback) => {
-  const dom = htmlparser.parseDOM(input, { xmlMode: true });
-  callback(generate(dom), setRoot(dom));
-};
-
-
-module.exports = function svgson (input, options, callback) {
-  const initialConfig = {
-    svgo: false,
-    svgoConfig: {
-      plugins: [
-        { removeStyleElement: true },
-        { removeAttrs: {
-            attrs: '(stroke-width|stroke-linecap|stroke-linejoin)'
-          }
-        }
-      ],
-      multipass: true
-    },
-    title: null,
-    pathsKey: null,
-    customAttrs: {},
-  }
-
-  const config = Object.assign({}, initialConfig, options);
-  const hasCustomAttrs = Object.getOwnPropertyNames(config.customAttrs).length !== 0;
-  const wrapInKey = (key, node) => ({ [key]: node });
-
-  const _processOne = (node, more) => {
-    const nod = config.pathsKey ? wrapInKey(config.pathsKey, node) : node;
-    return hasCustomAttrs
-      ? Object.assign({}, nod, config.customAttrs, more)
-      : Object.assign({}, nod, more);
-  };
-
-  return optimize(config.svgo, input, config.svgoConfig, r => {
-    parseAndGenerate(r, (generated, root) => {
-      const isArray = Array.isArray(root);
-      const more = config.title ? { title: config.title } : {};
-
-      if (isArray) {
-        callback( generated.map((node, i) => _processOne(node, more)) );
-      } else {
-        callback( _processOne(generated, more) )
-      }
-
-    });
-  });
-
-};
+export default svgson
