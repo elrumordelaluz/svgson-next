@@ -1,8 +1,10 @@
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
-chai.use(chaiAsPromised)
-const expect = chai.expect
 import svgson from './new'
+import svgsonOld from 'svgson'
+
+const expect = chai.expect
+chai.use(chaiAsPromised)
 chai.should()
 
 const SVG =
@@ -122,4 +124,13 @@ describe('svgson 2.0.0', () => {
       )
     })
   })
+  
+  it('Works in compat mode', () => {
+    svgson(SVG).then(([res]) => {
+      svgsonOld(SVG, {}, resOld => {
+        console.log(resOld, res);
+      })
+    })
+  })
+  
 })

@@ -57,6 +57,7 @@
     "nyc": "10.1.2",
     "rimraf": "2.6.1",
     "semantic-release": "^6.3.2",
+    "svgson": "2.1.0",
     "webpack": "2.2.1"
   },
   "config": {
