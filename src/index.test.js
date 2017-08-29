@@ -151,4 +151,18 @@ describe('svgson-next', () => {
       })
       .catch(done)
   })
+  
+  it('Applies camelCase', done => {
+    svgson(SVG, {
+      camelcase: true
+    })
+      .then(([res]) => {
+        const childrenAttrs = res.children[0].attribs
+        expect(childrenAttrs).to.deep.include.keys('strokeLinecap', 'data-name')
+        expect(childrenAttrs).to.have.property('strokeLinecap', 'round')
+        expect(childrenAttrs).to.have.property('data-name', 'stroke')
+        done()
+      })
+      .catch(done)
+  })
 })
