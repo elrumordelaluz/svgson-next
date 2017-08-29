@@ -17,10 +17,9 @@ export const svgoDefaultConfig = {
 
 export const optimizeSVG = (input, config) => {
   return new Promise((resolve, reject) => {
-    return new svgo(config).optimize(
-      input,
-      ({ data }) => (data ? resolve(data) : reject())
-    )
+    return new svgo(config).optimize(input, ({ data }) => {
+      return data ? resolve(data) : reject()
+    })
   })
 }
 
