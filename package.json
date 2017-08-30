@@ -36,7 +36,7 @@
   },
   "homepage": "https://github.com/elrumordelaluz/svgson-next#readme",
   "dependencies": {
-    "clean-deep": "^3.0.1",
+    "clean-deep": "3.0.2",
     "deep-rename-keys": "^0.2.1",
     "dom-serializer": "^0.1.0",
     "htmlparser2": "3.9.2",
