@@ -1,6 +1,6 @@
 {
   "name": "svgson-next",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "Experiments for svgson",
   "main": "dist/index.js",
   "scripts": {
