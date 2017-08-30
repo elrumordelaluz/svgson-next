@@ -18,7 +18,9 @@ export const svgoDefaultConfig = {
 }
 
 export const parseInput = input => {
-  return Promise.resolve(htmlparser.parseDOM(input, { xmlMode: true }))
+  const parsed = htmlparser.parseDOM(input, { xmlMode: true })
+  const shouldFilter = parsed.length === 1 && parsed[0].name === 'root'
+  return Promise.resolve(shouldFilter ? parsed[0].children : parsed)
 }
 
 export const sanitizeInput = input => {
@@ -28,9 +30,11 @@ export const sanitizeInput = input => {
   return serializer(filtered)
 }
 
+const wrapInput = input => `<root>${input}</root>`
+
 export const optimizeSVG = (input, config) => {
   return new Promise((resolve, reject) => {
-    return new svgo(config).optimize(input, ({ data }) => {
+    return new svgo(config).optimize(wrapInput(input), ({ data }) => {
       return data ? resolve(data) : reject()
     })
   })

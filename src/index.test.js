@@ -10,6 +10,17 @@ chai.should()
 const SVG =
   '<svg viewBox="0 0 100 100" width="100" height="100"><circle r="15" data-name="stroke" stroke-linecap="round" /></svg>'
 
+const MULTIPLE_SVG = `
+  <svg viewBox="0 0 100 100" width="100" height="100">
+    <circle r="15" data-name="first" stroke-linecap="round" />
+  </svg>
+  <svg viewBox="0 0 50 50" width="50" height="50">
+    <title>Second SVG</title>
+    <circle r="15" data-name="second" stroke-linecap="round" />
+  </svg>
+`
+
+
 const expected = [
   {
     type: 'tag',
@@ -161,6 +172,20 @@ describe('svgson-next', () => {
         expect(childrenAttrs).to.deep.include.keys('strokeLinecap', 'data-name')
         expect(childrenAttrs).to.have.property('strokeLinecap', 'round')
         expect(childrenAttrs).to.have.property('data-name', 'stroke')
+        done()
+      })
+      .catch(done)
+  })
+  
+  it('Works with multiple SVG optimized', done => {
+    // due to https://github.com/svg/svgo/issues/782
+    svgson(MULTIPLE_SVG, {
+      optimize: true
+    })
+      .then(([res]) => {
+        const childrenAttrs = res.children[0].attribs
+        expect(res).to.not.have.property('name', 'root')
+        expect(res).to.have.property('name', 'svg')
         done()
       })
       .catch(done)
