@@ -1,6 +1,8 @@
 import omitDeep from 'omit-deep'
 import rename from 'deep-rename-keys'
 import clean from 'clean-deep'
+import htmlparser from 'htmlparser2'
+import serializer from 'dom-serializer'
 import svgo from 'svgo'
 
 export const svgoDefaultConfig = {
@@ -13,6 +15,17 @@ export const svgoDefaultConfig = {
     },
   ],
   multipass: true,
+}
+
+export const parseInput = input => {
+  return Promise.resolve(htmlparser.parseDOM(input, { xmlMode: true }))
+}
+
+export const sanitizeInput = input => {
+  const parsed = htmlparser.parseDOM(input, { xmlMode: true })
+  const f = node => node.type === 'tag' && node.name === 'svg'
+  const filtered = parsed.filter(f)
+  return serializer(filtered)
 }
 
 export const optimizeSVG = (input, config) => {

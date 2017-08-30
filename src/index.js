@@ -1,4 +1,3 @@
-import htmlparser from 'htmlparser2'
 import * as t from './tools'
 
 const svgson = function svgson(
@@ -13,11 +12,8 @@ const svgson = function svgson(
   } = {}
 ) {
   const optimizer = input => {
-    return optimize ? t.optimizeSVG(input, svgoConfig) : Promise.resolve(input)
-  }
-
-  const parseInput = input => {
-    return Promise.resolve(htmlparser.parseDOM(input, { xmlMode: true }))
+    const sanitized = t.sanitizeInput(input)
+    return optimize ? t.optimizeSVG(sanitized, svgoConfig) : Promise.resolve(sanitized)
   }
 
   const applyFilters = input => {
@@ -30,7 +26,6 @@ const svgson = function svgson(
       camelcase || compat ? t.camelize(node) : node
 
     const result = input
-      .filter(t.getOnlySvg)
       .map(t.removeAttrs)
       .map(applyCompatMode)
       .map(applyPathsKey)
@@ -45,7 +40,7 @@ const svgson = function svgson(
       ? Promise.resolve(input)
       : Promise.reject('No result produced')
 
-  return optimizer(input).then(parseInput).then(applyFilters).then(haveResult)
+  return optimizer(input).then(t.parseInput).then(applyFilters).then(haveResult)
 }
 
 const processInput = input => {}
