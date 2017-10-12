@@ -40,7 +40,7 @@ export const optimizeSVG = (input, config) => {
   })
 }
 
-export const getOnlySvg = node => node.type === 'tag' && node.name === 'svg'
+// export const getOnlySvg = node => node.type === 'tag' && node.name === 'svg'
 export const removeAttrs = obj => omitDeep(obj, ['next', 'prev', 'parent'])
 export const wrapInKey = (key, node) => ({ [key]: node })
 export const addCustomAttrs = (attrs, node) => ({
