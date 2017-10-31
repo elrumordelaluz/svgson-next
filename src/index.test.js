@@ -54,7 +54,7 @@ const expectedOptimized = [
   {
     type: 'tag',
     name: 'svg',
-    attribs: { viewBox: '0 0 100 100' },
+    attribs: {},
     children: [
       {
         type: 'tag',

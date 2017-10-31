@@ -8,6 +8,7 @@ import svgo from 'svgo'
 export const svgoDefaultConfig = {
   plugins: [
     { removeStyleElement: true },
+    { removeViewBox: false },
     {
       removeAttrs: {
         attrs: '(stroke-width|stroke-linecap|stroke-linejoin|)',
@@ -33,14 +34,9 @@ export const sanitizeInput = input => {
 const wrapInput = input => `<root>${input}</root>`
 
 export const optimizeSVG = (input, config) => {
-  return new Promise((resolve, reject) => {
-    return new svgo(config).optimize(wrapInput(input), ({ data }) => {
-      return data ? resolve(data) : reject()
-    })
-  })
+  return new svgo(config).optimize(wrapInput(input)).then(({ data }) => data)
 }
 
-// export const getOnlySvg = node => node.type === 'tag' && node.name === 'svg'
 export const removeAttrs = obj => omitDeep(obj, ['next', 'prev', 'parent'])
 export const wrapInKey = (key, node) => ({ [key]: node })
 export const addCustomAttrs = (attrs, node) => ({

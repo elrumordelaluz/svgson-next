@@ -41,7 +41,7 @@
     "dom-serializer": "^0.1.0",
     "htmlparser2": "3.9.2",
     "omit-deep": "0.3.0",
-    "svgo": "0.7.2"
+    "svgo": "1.0.1"
   },
   "devDependencies": {
     "babel-cli": "6.26.0",
