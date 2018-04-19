@@ -13,14 +13,17 @@ const svgson = function svgson(
 ) {
   const optimizer = input => {
     const sanitized = t.sanitizeInput(input)
-    return optimize ? t.optimizeSVG(sanitized, svgoConfig) : Promise.resolve(sanitized)
+    return optimize
+      ? t.optimizeSVG(sanitized, svgoConfig)
+      : Promise.resolve(sanitized)
   }
 
   const applyFilters = input => {
     const applyPathsKey = node =>
       pathsKey !== '' ? t.wrapInKey(pathsKey, node) : node
-    const applyCustomAttrs = node =>
-      customAttrs ? t.addCustomAttrs(customAttrs, node) : node
+    const applyCustomAttrs = node => {
+      return customAttrs ? customAttrs(node) : node
+    }
     const applyCompatMode = node => (compat ? t.compat(node) : node)
     const applyCamelcase = node =>
       camelcase || compat ? t.camelize(node) : node
@@ -40,7 +43,10 @@ const svgson = function svgson(
       ? Promise.resolve(input)
       : Promise.reject('No result produced')
 
-  return optimizer(input).then(t.parseInput).then(applyFilters).then(haveResult)
+  return optimizer(input)
+    .then(t.parseInput)
+    .then(applyFilters)
+    .then(haveResult)
 }
 
 const processInput = input => {}

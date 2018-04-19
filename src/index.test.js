@@ -20,7 +20,6 @@ const MULTIPLE_SVG = `
   </svg>
 `
 
-
 const expected = [
   {
     type: 'tag',
@@ -76,7 +75,9 @@ describe('svgson-next', () => {
   })
 
   it('Returns an Array', done => {
-    svgson(SVG).should.eventually.be.an.instanceOf(Array).notify(done)
+    svgson(SVG)
+      .should.eventually.be.an.instanceOf(Array)
+      .notify(done)
   })
 
   it('Resulted nodes has basic keys', done => {
@@ -131,10 +132,11 @@ describe('svgson-next', () => {
 
   it('Adds custom attributes', done => {
     svgson(SVG, {
-      customAttrs: {
+      customAttrs: node => ({
+        ...node,
         foo: 'bar',
         test: false,
-      },
+      }),
     })
       .then(([res]) => {
         expect(res).to.include.keys('foo', 'test')
@@ -162,10 +164,10 @@ describe('svgson-next', () => {
       })
       .catch(done)
   })
-  
+
   it('Applies camelCase', done => {
     svgson(SVG, {
-      camelcase: true
+      camelcase: true,
     })
       .then(([res]) => {
         const childrenAttrs = res.children[0].attribs
@@ -176,11 +178,11 @@ describe('svgson-next', () => {
       })
       .catch(done)
   })
-  
+
   it('Works with multiple SVG optimized', done => {
     // due to https://github.com/svg/svgo/issues/782
     svgson(MULTIPLE_SVG, {
-      optimize: true
+      optimize: true,
     })
       .then(([res]) => {
         const childrenAttrs = res.children[0].attribs
