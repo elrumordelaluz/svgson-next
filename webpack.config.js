@@ -1,8 +1,8 @@
-import { join } from 'path'
+const { join } = require('path')
 
 const include = join(__dirname, 'src')
 
-export default {
+module.exports = {
   entry: './src/index',
   output: {
     path: join(__dirname, 'dist'),
@@ -10,12 +10,10 @@ export default {
     library: 'svgson',
   },
   externals: {
-    'svgo': 'svgo'
+    svgo: 'svgo',
   },
   devtool: 'source-map',
   module: {
-    loaders: [
-      { test: /\.js$/, loader: 'babel-loader', include },
-    ],
-  }
-} 
+    rules: [{ test: /\.js$/, loader: 'babel-loader', include }],
+  },
+}
