@@ -9,23 +9,27 @@
     "test:watch": "npm t -- -w",
     "test": "mocha src/*.test.js --require babel-register",
     "cover": "nyc --reporter=lcov --reporter=text npm t",
-    "semantic-release":
-      "semantic-release pre && npm publish && semantic-release post",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
     "prebuild": "rimraf dist",
     "build": "npm-run-all --parallel build:*",
     "build:main": "babel --out-dir dist --ignore *.test.js src",
     "build:umd": "webpack --output-filename index.umd.js --mode production",
-    "build:umd.min":
-      "webpack --output-filename index.umd.min.js --mode production"
+    "build:umd.min": "webpack --output-filename index.umd.min.js --mode production"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/elrumordelaluz/svgson-next.git"
   },
-  "keywords": ["svg", "json", "svgo"],
-  "files": ["dist", "README.md"],
-  "author":
-    "Lionel T <elrumordelaluz@hotmail.com> (https://elrumordelaluz.com/)",
+  "keywords": [
+    "svg",
+    "json",
+    "svgo"
+  ],
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "author": "Lionel T <elrumordelaluz@hotmail.com> (https://elrumordelaluz.com/)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/elrumordelaluz/svgson-next/issues"
@@ -72,9 +76,14 @@
     "functions": 90,
     "branches": 90,
     "check-coverage": true,
-    "exclude": ["**/*.test.js"]
+    "exclude": [
+      "**/*.test.js"
+    ]
   },
   "babel": {
-    "presets": ["es2015", "stage-2"]
+    "presets": [
+      "es2015",
+      "stage-2"
+    ]
   }
 }
