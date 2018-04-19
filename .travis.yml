@@ -9,8 +9,6 @@ notifications:
   email: false
 node_js:
   - '8'
-  - '7'
-  - '6'
 script:
   - npm run cover
   - npm run build
