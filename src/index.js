@@ -7,6 +7,7 @@ const svgson = function svgson(
     svgoConfig = t.svgoDefaultConfig,
     pathsKey = '',
     customAttrs = null,
+    transformNode = node => node,
     compat = false,
     camelcase = false,
   } = {}
@@ -21,9 +22,6 @@ const svgson = function svgson(
   const applyFilters = input => {
     const applyPathsKey = node =>
       pathsKey !== '' ? t.wrapInKey(pathsKey, node) : node
-    const applyCustomAttrs = node => {
-      return customAttrs ? customAttrs(node) : node
-    }
     const applyCompatMode = node => (compat ? t.compat(node) : node)
     const applyCamelcase = node =>
       camelcase || compat ? t.camelize(node) : node
@@ -32,7 +30,7 @@ const svgson = function svgson(
       .map(t.removeAttrs)
       .map(applyCompatMode)
       .map(applyPathsKey)
-      .map(applyCustomAttrs)
+      .map(transformNode)
       .map(applyCamelcase)
 
     return Promise.resolve(result)

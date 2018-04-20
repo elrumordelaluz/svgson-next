@@ -130,9 +130,9 @@ describe('svgson-next', () => {
       .catch(done)
   })
 
-  it('Adds custom attributes', done => {
+  it('Adds custom attributes via transformNode', done => {
     svgson(SVG, {
-      customAttrs: node => ({
+      transformNode: node => ({
         ...node,
         foo: 'bar',
         test: false,
