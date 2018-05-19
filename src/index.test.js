@@ -22,14 +22,18 @@ const MULTIPLE_SVG = `
 
 const expected = [
   {
-    type: 'tag',
+    type: 'element',
     name: 'svg',
-    attribs: { width: '100', height: '100', viewBox: '0 0 100 100' },
+    attributes: { width: '100', height: '100', viewBox: '0 0 100 100' },
     children: [
       {
-        type: 'tag',
+        type: 'element',
         name: 'circle',
-        attribs: { r: '15', 'data-name': 'stroke', 'stroke-linecap': 'round' },
+        attributes: {
+          r: '15',
+          'data-name': 'stroke',
+          'stroke-linecap': 'round',
+        },
         children: [],
       },
     ],
@@ -38,27 +42,27 @@ const expected = [
 
 const expectedOptimized = [
   {
-    type: 'tag',
+    type: 'element',
     name: 'svg',
-    attribs: { width: '100', height: '100', viewBox: '0 0 100 100' },
+    attributes: { width: '100', height: '100', viewBox: '0 0 100 100' },
     children: [
       {
-        type: 'tag',
+        type: 'element',
         name: 'circle',
-        attribs: { r: '15', 'data-name': 'stroke' },
+        attributes: { r: '15', 'data-name': 'stroke' },
         children: [],
       },
     ],
   },
   {
-    type: 'tag',
+    type: 'element',
     name: 'svg',
-    attribs: {},
+    attributes: {},
     children: [
       {
-        type: 'tag',
+        type: 'element',
         name: 'circle',
-        attribs: { r: '15', 'data-name': 'stroke' },
+        attributes: { r: '15', 'data-name': 'stroke' },
         children: [],
       },
     ],
@@ -83,7 +87,7 @@ describe('svgson-next', () => {
   it('Resulted nodes has basic keys', done => {
     svgson(SVG)
       .then(([res]) => {
-        expect(res).to.include.keys('name', 'attribs', 'children')
+        expect(res).to.include.keys('name', 'attributes', 'children')
         done()
       })
       .catch(done)
@@ -170,7 +174,7 @@ describe('svgson-next', () => {
       camelcase: true,
     })
       .then(([res]) => {
-        const childrenAttrs = res.children[0].attribs
+        const childrenAttrs = res.children[0].attributes
         expect(childrenAttrs).to.deep.include.keys('strokeLinecap', 'data-name')
         expect(childrenAttrs).to.have.property('strokeLinecap', 'round')
         expect(childrenAttrs).to.have.property('data-name', 'stroke')
@@ -185,7 +189,7 @@ describe('svgson-next', () => {
       optimize: true,
     })
       .then(([res]) => {
-        const childrenAttrs = res.children[0].attribs
+        const childrenAttrs = res.children[0].attributes
         expect(res).to.not.have.property('name', 'root')
         expect(res).to.have.property('name', 'svg')
         done()

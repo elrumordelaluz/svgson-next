@@ -13,10 +13,7 @@ const svgson = function svgson(
   } = {}
 ) {
   const optimizer = input => {
-    const sanitized = t.sanitizeInput(input)
-    return optimize
-      ? t.optimizeSVG(sanitized, svgoConfig)
-      : Promise.resolve(sanitized)
+    return optimize ? t.optimizeSVG(input, svgoConfig) : Promise.resolve(input)
   }
 
   const applyFilters = input => {
@@ -26,27 +23,28 @@ const svgson = function svgson(
     const applyCamelcase = node =>
       camelcase || compat ? t.camelize(node) : node
 
-    const result = input
-      .map(t.removeAttrs)
-      .map(applyCompatMode)
-      .map(applyPathsKey)
-      .map(transformNode)
-      .map(applyCamelcase)
+    let n
+    n = t.removeAttrs(input)
+    if (compat) {
+      n = t.compat(n)
+    }
+    if (pathsKey !== '') {
+      n = t.wrapInKey(pathsKey, n)
+    }
+    n = transformNode(n)
+    if (camelcase || compat) {
+      n = t.camelize(n)
+    }
 
-    return Promise.resolve(result)
+    return Promise.resolve(n)
   }
-
-  const haveResult = input =>
-    input.length > 0
-      ? Promise.resolve(input)
-      : Promise.reject('No result produced')
 
   return optimizer(input)
     .then(t.parseInput)
     .then(applyFilters)
-    .then(haveResult)
+    .then(r => {
+      return r.name === 'root' ? r.children : [r]
+    })
 }
-
-const processInput = input => {}
 
 export default svgson

@@ -1,9 +1,8 @@
 import omitDeep from 'omit-deep'
 import rename from 'deep-rename-keys'
 import clean from 'clean-deep'
-import htmlparser from 'htmlparser2'
-import serializer from 'dom-serializer'
 import svgo from 'svgo'
+import { parseSync } from 'xml-reader'
 
 export const svgoDefaultConfig = {
   plugins: [
@@ -19,16 +18,9 @@ export const svgoDefaultConfig = {
 }
 
 export const parseInput = input => {
-  const parsed = htmlparser.parseDOM(input, { xmlMode: true })
+  const parsed = parseSync(input)
   const shouldFilter = parsed.length === 1 && parsed[0].name === 'root'
   return Promise.resolve(shouldFilter ? parsed[0].children : parsed)
-}
-
-export const sanitizeInput = input => {
-  const parsed = htmlparser.parseDOM(input, { xmlMode: true })
-  const f = node => node.type === 'tag' && node.name === 'svg'
-  const filtered = parsed.filter(f)
-  return serializer(filtered)
 }
 
 const wrapInput = input => `<root>${input}</root>`
@@ -37,7 +29,7 @@ export const optimizeSVG = (input, config) => {
   return new svgo(config).optimize(wrapInput(input)).then(({ data }) => data)
 }
 
-export const removeAttrs = obj => omitDeep(obj, ['next', 'prev', 'parent'])
+export const removeAttrs = obj => omitDeep(obj, ['value', 'parent'])
 export const wrapInKey = (key, node) => ({ [key]: node })
 export const addCustomAttrs = (attrs, node) => ({
   ...node,
@@ -46,7 +38,7 @@ export const addCustomAttrs = (attrs, node) => ({
 
 export const compat = node => {
   const renamed = rename(node, key => {
-    if (key === 'attribs') {
+    if (key === 'attributes') {
       return 'attrs'
     }
     if (key === 'children') {
