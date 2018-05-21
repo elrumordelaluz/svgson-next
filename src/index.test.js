@@ -1,6 +1,6 @@
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
-import svgson from './index'
+import svgson, { stringify } from './index'
 import _svgson from 'svgson'
 
 const expect = chai.expect
@@ -8,15 +8,15 @@ chai.use(chaiAsPromised)
 chai.should()
 
 const SVG =
-  '<svg viewBox="0 0 100 100" width="100" height="100"><circle r="15" data-name="stroke" stroke-linecap="round" /></svg>'
+  '<svg viewBox="0 0 100 100" width="100" height="100"><circle r="15" data-name="stroke" stroke-linecap="round"/></svg>'
 
 const MULTIPLE_SVG = `
   <svg viewBox="0 0 100 100" width="100" height="100">
-    <circle r="15" data-name="first" stroke-linecap="round" />
+    <circle r="15" data-name="first" stroke-linecap="round"/>
   </svg>
   <svg viewBox="0 0 50 50" width="50" height="50">
     <title>Second SVG</title>
-    <circle r="15" data-name="second" stroke-linecap="round" />
+    <circle r="15" data-name="second" stroke-linecap="round"/>
   </svg>
 `
 
@@ -192,6 +192,15 @@ describe('svgson-next', () => {
         const childrenAttrs = res.children[0].attributes
         expect(res).to.not.have.property('name', 'root')
         expect(res).to.have.property('name', 'svg')
+        done()
+      })
+      .catch(done)
+  })
+
+  it('Stringify', done => {
+    svgson(SVG)
+      .then(([res]) => {
+        expect(SVG).to.be.equal(stringify(res))
         done()
       })
       .catch(done)

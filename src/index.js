@@ -1,4 +1,5 @@
 import * as t from './tools'
+import xmlPrint from 'xml-printer'
 
 const svgson = function svgson(
   input,
@@ -46,5 +47,7 @@ const svgson = function svgson(
       return r.name === 'root' ? r.children : [r]
     })
 }
+
+export const stringify = input => xmlPrint(input)
 
 export default svgson
