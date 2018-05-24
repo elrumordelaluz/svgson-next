@@ -16,7 +16,10 @@ const svgson = function svgson(
   const optimizer = input => {
     return optimize ? t.optimizeSVG(input, svgoConfig) : Promise.resolve(input)
   }
-  const wrapper = input => t.wrapInput(input)
+  const wrapper = input => {
+    const cleanInput = t.removeDoctype(input)
+    return t.wrapInput(cleanInput)
+  }
   const parser = input => t.parseInput(input)
 
   const applyFilters = input => {

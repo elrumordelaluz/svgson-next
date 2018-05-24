@@ -18,7 +18,7 @@ export const svgoDefaultConfig = {
 }
 
 export const parseInput = input => {
-  const parsed = parseSync(input)
+  const parsed = parseSync(input, { parentNodes: false })
   const hasMoreChildren = parsed.name === 'root' && parsed.children.length > 1
   const isValid = hasMoreChildren
     ? parsed.children.reduce((acc, { name }) => {
@@ -35,6 +35,9 @@ export const parseInput = input => {
   })
 }
 
+export const removeDoctype = input => {
+  return input.replace(/<[\/]{0,1}(\!?DOCTYPE|\??xml)[^><]*>/gi, '')
+}
 export const wrapInput = input => Promise.resolve(`<root>${input}</root>`)
 
 export const optimizeSVG = (input, config) => {

@@ -206,4 +206,19 @@ describe('svgson-next', () => {
       })
       .catch(done)
   })
+
+  it('Works with doctype', done => {
+    const svg = `<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 32 32">
+<path class="st0" d="M16,16v15.5c0,0,9.3-2.6,12.7-15.5H16z"/>
+</svg>`
+    svgson(svg, { optimize: true })
+      .then(res => {
+        expect(res).to.have.property('name', 'svg')
+        done()
+      })
+      .catch(done)
+  })
 })
