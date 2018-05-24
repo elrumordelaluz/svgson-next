@@ -23,11 +23,20 @@ const svgson = function svgson(
   const parser = input => t.parseInput(input)
 
   const applyFilters = input => {
-    const applyPathsKey = node =>
-      pathsKey !== '' ? t.wrapInKey(pathsKey, node) : node
-    const applyCompatMode = node => (compat ? t.compat(node) : node)
-    const applyCamelcase = node =>
-      camelcase || compat ? t.camelize(node) : node
+    const applyPathsKey = node => {
+      return pathsKey !== '' ? t.wrapInKey(pathsKey, node) : node
+    }
+    const applyCompatMode = node => {
+      return compat ? t.compat(node) : node
+    }
+    const applyCamelcase = node => {
+      return camelcase || compat ? t.camelize(node) : node
+    }
+    const applyTransformNode = node => {
+      return node.name === 'root'
+        ? node.children.map(transformNode)
+        : transformNode(node)
+    }
 
     let n
     n = t.removeAttrs(input)
@@ -37,7 +46,7 @@ const svgson = function svgson(
     if (pathsKey !== '') {
       n = t.wrapInKey(pathsKey, n)
     }
-    n = transformNode(n)
+    n = applyTransformNode(n)
     if (camelcase || compat) {
       n = t.camelize(n)
     }
