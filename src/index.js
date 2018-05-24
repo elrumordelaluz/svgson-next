@@ -16,6 +16,8 @@ const svgson = function svgson(
   const optimizer = input => {
     return optimize ? t.optimizeSVG(input, svgoConfig) : Promise.resolve(input)
   }
+  const wrapper = input => t.wrapInput(input)
+  const parser = input => t.parseInput(input)
 
   const applyFilters = input => {
     const applyPathsKey = node =>
@@ -40,11 +42,12 @@ const svgson = function svgson(
     return Promise.resolve(n)
   }
 
-  return optimizer(input)
-    .then(t.parseInput)
+  return wrapper(input)
+    .then(optimizer)
+    .then(parser)
     .then(applyFilters)
     .then(r => {
-      return r.name === 'root' ? r.children : [r]
+      return r.name === 'root' ? r.children : r
     })
 }
 

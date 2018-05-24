@@ -78,15 +78,15 @@ describe('svgson-next', () => {
     svgson('abc').should.be.rejected.notify(done)
   })
 
-  it('Returns an Array', done => {
-    svgson(SVG)
+  it('Returns an Array when input is more than one SVG', done => {
+    svgson(MULTIPLE_SVG)
       .should.eventually.be.an.instanceOf(Array)
       .notify(done)
   })
 
   it('Resulted nodes has basic keys', done => {
     svgson(SVG)
-      .then(([res]) => {
+      .then(res => {
         expect(res).to.include.keys('name', 'attributes', 'children')
         done()
       })
@@ -95,7 +95,7 @@ describe('svgson-next', () => {
 
   it('Wrap nodes in pathKey', done => {
     svgson(SVG, { pathsKey: 'paths' })
-      .then(([res]) => {
+      .then(res => {
         expect(res).to.include.key('paths')
         expect(res).to.eql({
           paths: expected[0],
@@ -107,7 +107,7 @@ describe('svgson-next', () => {
 
   it('Optimize using default config', done => {
     svgson(SVG, { optimize: true })
-      .then(([res]) => {
+      .then(res => {
         expect(res).to.eql(expectedOptimized[0])
         done()
       })
@@ -127,7 +127,7 @@ describe('svgson-next', () => {
         ],
       },
     })
-      .then(([res]) => {
+      .then(res => {
         expect(res).to.eql(expectedOptimized[1])
         done()
       })
@@ -142,7 +142,7 @@ describe('svgson-next', () => {
         test: false,
       }),
     })
-      .then(([res]) => {
+      .then(res => {
         expect(res).to.include.keys('foo', 'test')
         expect(res).to.have.property('foo', 'bar')
         expect(res).to.have.property('test', false)
@@ -159,7 +159,7 @@ describe('svgson-next', () => {
 
   it('Works in compat mode', done => {
     svgson(SVG, { compat: true })
-      .then(([res]) => {
+      .then(res => {
         expect(res).to.include.keys('attrs', 'childs')
         _svgson(SVG, {}, old => {
           expect(res).to.deep.equal(old)
@@ -173,7 +173,7 @@ describe('svgson-next', () => {
     svgson(SVG, {
       camelcase: true,
     })
-      .then(([res]) => {
+      .then(res => {
         const childrenAttrs = res.children[0].attributes
         expect(childrenAttrs).to.deep.include.keys('strokeLinecap', 'data-name')
         expect(childrenAttrs).to.have.property('strokeLinecap', 'round')
@@ -188,10 +188,11 @@ describe('svgson-next', () => {
     svgson(MULTIPLE_SVG, {
       optimize: true,
     })
-      .then(([res]) => {
-        const childrenAttrs = res.children[0].attributes
-        expect(res).to.not.have.property('name', 'root')
-        expect(res).to.have.property('name', 'svg')
+      .then(([svg1, svg2]) => {
+        expect(svg1).to.not.have.property('name', 'root')
+        expect(svg2).to.not.have.property('name', 'root')
+        expect(svg1).to.have.property('name', 'svg')
+        expect(svg2).to.have.property('name', 'svg')
         done()
       })
       .catch(done)
@@ -199,7 +200,7 @@ describe('svgson-next', () => {
 
   it('Stringify', done => {
     svgson(SVG)
-      .then(([res]) => {
+      .then(res => {
         expect(SVG).to.be.equal(stringify(res))
         done()
       })

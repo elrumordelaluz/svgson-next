@@ -19,14 +19,26 @@ export const svgoDefaultConfig = {
 
 export const parseInput = input => {
   const parsed = parseSync(input)
-  const shouldFilter = parsed.length === 1 && parsed[0].name === 'root'
-  return Promise.resolve(shouldFilter ? parsed[0].children : parsed)
+  const hasMoreChildren = parsed.name === 'root' && parsed.children.length > 1
+  const isValid = hasMoreChildren
+    ? parsed.children.reduce((acc, { name }) => {
+        return !acc ? name === 'svg' : true
+      }, false)
+    : parsed.children[0].name === 'svg'
+
+  return new Promise((resolve, reject) => {
+    if (isValid) {
+      resolve(hasMoreChildren ? parsed : parsed.children[0])
+    } else {
+      reject('nothing to parse')
+    }
+  })
 }
 
-const wrapInput = input => `<root>${input}</root>`
+export const wrapInput = input => Promise.resolve(`<root>${input}</root>`)
 
 export const optimizeSVG = (input, config) => {
-  return new svgo(config).optimize(wrapInput(input)).then(({ data }) => data)
+  return new svgo(config).optimize(input).then(({ data }) => data)
 }
 
 export const removeAttrs = obj => omitDeep(obj, ['value', 'parent'])
