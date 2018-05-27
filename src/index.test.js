@@ -25,6 +25,7 @@ const expected = [
     type: 'element',
     name: 'svg',
     attributes: { width: '100', height: '100', viewBox: '0 0 100 100' },
+    value: '',
     children: [
       {
         type: 'element',
@@ -35,6 +36,7 @@ const expected = [
           'stroke-linecap': 'round',
         },
         children: [],
+        value: '',
       },
     ],
   },
@@ -45,12 +47,14 @@ const expectedOptimized = [
     type: 'element',
     name: 'svg',
     attributes: { width: '100', height: '100', viewBox: '0 0 100 100' },
+    value: '',
     children: [
       {
         type: 'element',
         name: 'circle',
         attributes: { r: '15', 'data-name': 'stroke' },
         children: [],
+        value: '',
       },
     ],
   },
@@ -58,12 +62,14 @@ const expectedOptimized = [
     type: 'element',
     name: 'svg',
     attributes: {},
+    value: '',
     children: [
       {
         type: 'element',
         name: 'circle',
         attributes: { r: '15', 'data-name': 'stroke' },
         children: [],
+        value: '',
       },
     ],
   },

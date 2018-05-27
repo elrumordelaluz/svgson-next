@@ -44,7 +44,7 @@ export const optimizeSVG = (input, config) => {
   return new svgo(config).optimize(input).then(({ data }) => data)
 }
 
-export const removeAttrs = obj => omitDeep(obj, ['value', 'parent'])
+export const removeAttrs = obj => omitDeep(obj, ['parent'])
 export const wrapInKey = (key, node) => ({ [key]: node })
 export const addCustomAttrs = (attrs, node) => ({
   ...node,
