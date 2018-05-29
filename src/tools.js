@@ -1,7 +1,6 @@
 import omitDeep from 'omit-deep'
 import rename from 'deep-rename-keys'
 import clean from 'clean-deep'
-import svgo from 'svgo'
 import { parseSync } from 'xml-reader'
 
 export const svgoDefaultConfig = {
@@ -40,10 +39,6 @@ export const removeDoctype = input => {
 }
 export const wrapInput = input => Promise.resolve(`<root>${input}</root>`)
 
-export const optimizeSVG = (input, config) => {
-  return new svgo(config).optimize(input).then(({ data }) => data)
-}
-
 export const removeAttrs = obj => omitDeep(obj, ['parent'])
 export const wrapInKey = (key, node) => ({ [key]: node })
 export const addCustomAttrs = (attrs, node) => ({
@@ -51,7 +46,7 @@ export const addCustomAttrs = (attrs, node) => ({
   ...attrs,
 })
 
-export const compat = node => {
+export const applyCompat = node => {
   const renamed = rename(node, key => {
     if (key === 'attributes') {
       return 'attrs'

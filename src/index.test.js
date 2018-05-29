@@ -2,10 +2,28 @@ import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import svgson, { stringify } from './index'
 import _svgson from 'svgson'
+import svgo from 'svgo'
 
 const expect = chai.expect
 chai.use(chaiAsPromised)
 chai.should()
+
+const svgoDefaultConfig = {
+  plugins: [
+    { removeStyleElement: true },
+    { removeViewBox: false },
+    {
+      removeAttrs: {
+        attrs: '(stroke-width|stroke-linecap|stroke-linejoin|)',
+      },
+    },
+  ],
+  multipass: true,
+}
+
+const optimizeSVG = (input, config) => {
+  return new svgo(config).optimize(input).then(({ data }) => data)
+}
 
 const SVG =
   '<svg viewBox="0 0 100 100" width="100" height="100"><circle r="15" data-name="stroke" stroke-linecap="round"/></svg>'
@@ -112,30 +130,31 @@ describe('svgson-next', () => {
   })
 
   it('Optimize using default config', done => {
-    svgson(SVG, { optimize: true })
-      .then(res => {
-        expect(res).to.eql(expectedOptimized[0])
-        done()
+    optimizeSVG(SVG, svgoDefaultConfig)
+      .then(optimized => {
+        svgson(optimized, { optimize: true }).then(res => {
+          expect(res).to.eql(expectedOptimized[0])
+          done()
+        })
       })
       .catch(done)
   })
 
   it('Optimize using custom config', done => {
-    svgson(SVG, {
-      optimize: true,
-      svgoConfig: {
-        plugins: [
-          {
-            removeAttrs: {
-              attrs: '(width|height)',
-            },
+    optimizeSVG(SVG, {
+      plugins: [
+        {
+          removeAttrs: {
+            attrs: '(width|height)',
           },
-        ],
-      },
+        },
+      ],
     })
-      .then(res => {
-        expect(res).to.eql(expectedOptimized[1])
-        done()
+      .then(optimized => {
+        svgson(optimized).then(res => {
+          expect(res).to.eql(expectedOptimized[1])
+          done()
+        })
       })
       .catch(done)
   })

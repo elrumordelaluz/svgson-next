@@ -1,11 +1,17 @@
-import * as t from './tools'
+import {
+  parseInput,
+  wrapInput,
+  wrapInKey,
+  removeDoctype,
+  removeAttrs,
+  camelize,
+  applyCompat,
+} from './tools'
 import xmlPrint from 'xml-printer'
 
 const svgson = function svgson(
   input,
   {
-    optimize = false,
-    svgoConfig = t.svgoDefaultConfig,
     pathsKey = '',
     customAttrs = null,
     transformNode = node => node,
@@ -13,49 +19,34 @@ const svgson = function svgson(
     camelcase = false,
   } = {}
 ) {
-  const optimizer = input => {
-    return optimize ? t.optimizeSVG(input, svgoConfig) : Promise.resolve(input)
-  }
   const wrapper = input => {
-    const cleanInput = t.removeDoctype(input)
-    return t.wrapInput(cleanInput)
+    const cleanInput = removeDoctype(input)
+    return wrapInput(cleanInput)
   }
-  const parser = input => t.parseInput(input)
+  const parser = input => parseInput(input)
 
   const applyFilters = input => {
-    const applyPathsKey = node => {
-      return pathsKey !== '' ? t.wrapInKey(pathsKey, node) : node
-    }
-    const applyCompatMode = node => {
-      return compat ? t.compat(node) : node
-    }
-    const applyCamelcase = node => {
-      return camelcase || compat ? t.camelize(node) : node
-    }
     const applyTransformNode = node => {
       return node.name === 'root'
         ? node.children.map(transformNode)
         : transformNode(node)
     }
-
     let n
-    n = t.removeAttrs(input)
+    n = removeAttrs(input)
     if (compat) {
-      n = t.compat(n)
+      n = applyCompat(n)
     }
     if (pathsKey !== '') {
-      n = t.wrapInKey(pathsKey, n)
+      n = wrapInKey(pathsKey, n)
     }
     n = applyTransformNode(n)
     if (camelcase || compat) {
-      n = t.camelize(n)
+      n = camelize(n)
     }
-
     return Promise.resolve(n)
   }
 
   return wrapper(input)
-    .then(optimizer)
     .then(parser)
     .then(applyFilters)
     .then(r => {
