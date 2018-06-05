@@ -141,14 +141,9 @@ test('Optimize using custom config', async t => {
 
 test('Adds custom attributes via transformNode', async t => {
   const res = await svgson(SVG, {
-    transformNode: node => ({
-      ...node,
-      foo: 'bar',
-      test: false,
-    }),
+    transformNode: node => Object.assign({}, node, { foo: 'bar', test: false }),
   })
   const keys = Object.keys(res)
-  const entries = Object.entries(res)
   const values = Object.values(res)
   t.true(keys.includes('foo'))
   t.true(keys.includes('test'))
