@@ -54,6 +54,6 @@ const svgson = function svgson(
     })
 }
 
-export const stringify = input => xmlPrint(input)
+const stringify = input => xmlPrint(input)
 
-export default svgson
+export { svgson, stringify }
