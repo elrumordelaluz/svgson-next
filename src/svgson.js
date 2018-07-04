@@ -13,7 +13,6 @@ const svgson = function svgson(
   input,
   {
     pathsKey = '',
-    customAttrs = null,
     transformNode = node => node,
     compat = false,
     camelcase = false,
@@ -36,9 +35,6 @@ const svgson = function svgson(
     if (compat) {
       n = applyCompat(n)
     }
-    if (pathsKey !== '') {
-      n = wrapInKey(pathsKey, n)
-    }
     n = applyTransformNode(n)
     if (camelcase || compat) {
       n = camelize(n)
@@ -50,7 +46,8 @@ const svgson = function svgson(
     .then(parser)
     .then(applyFilters)
     .then(r => {
-      return r.name === 'root' ? r.children : r
+      const res = r.name === 'root' ? r.children : r
+      return pathsKey !== '' ? wrapInKey(pathsKey, res) : res
     })
 }
 

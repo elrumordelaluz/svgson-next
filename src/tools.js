@@ -3,19 +3,6 @@ import rename from 'deep-rename-keys'
 import clean from 'clean-deep'
 import { parseSync } from 'xml-reader'
 
-export const svgoDefaultConfig = {
-  plugins: [
-    { removeStyleElement: true },
-    { removeViewBox: false },
-    {
-      removeAttrs: {
-        attrs: '(stroke-width|stroke-linecap|stroke-linejoin|)',
-      },
-    },
-  ],
-  multipass: true,
-}
-
 export const parseInput = input => {
   const parsed = parseSync(input, { parentNodes: false })
   const hasMoreChildren = parsed.name === 'root' && parsed.children.length > 1

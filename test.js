@@ -33,27 +33,25 @@ const MULTIPLE_SVG = `
 <circle r="15" data-name="second" stroke-linecap="round"/>
 </svg>
 `
-const expected = [
-  {
-    type: 'element',
-    name: 'svg',
-    attributes: { width: '100', height: '100', viewBox: '0 0 100 100' },
-    value: '',
-    children: [
-      {
-        type: 'element',
-        name: 'circle',
-        attributes: {
-          r: '15',
-          'data-name': 'stroke',
-          'stroke-linecap': 'round',
-        },
-        children: [],
-        value: '',
+const expected = {
+  type: 'element',
+  name: 'svg',
+  attributes: { width: '100', height: '100', viewBox: '0 0 100 100' },
+  value: '',
+  children: [
+    {
+      type: 'element',
+      name: 'circle',
+      attributes: {
+        r: '15',
+        'data-name': 'stroke',
+        'stroke-linecap': 'round',
       },
-    ],
-  },
-]
+      children: [],
+      value: '',
+    },
+  ],
+}
 
 const expectedOptimized = [
   {
@@ -88,6 +86,70 @@ const expectedOptimized = [
   },
 ]
 
+const expectedMultiple = [
+  {
+    name: 'svg',
+    type: 'element',
+    value: '',
+    attributes: { viewBox: '0 0 100 100', width: '100', height: '100' },
+    children: [
+      {
+        name: 'circle',
+        type: 'element',
+        value: '',
+        attributes: {
+          r: '15',
+          'stroke-linecap': 'round',
+          'data-name': 'first',
+        },
+        children: [],
+      },
+    ],
+  },
+  {
+    name: 'svg',
+    type: 'element',
+    value: '',
+    attributes: { viewBox: '0 0 50 50', width: '50', height: '50' },
+    children: [
+      {
+        name: 'title',
+        type: 'element',
+        value: '',
+        attributes: {},
+        children: [
+          {
+            name: '',
+            type: 'text',
+            value: 'Second SVG',
+            attributes: {},
+            children: [],
+          },
+        ],
+      },
+      {
+        name: 'circle',
+        type: 'element',
+        value: '',
+        attributes: {
+          r: '15',
+          'stroke-linecap': 'round',
+          'data-name': 'second',
+        },
+        children: [],
+      },
+    ],
+  },
+]
+
+// <svg viewBox="0 0 100 100" width="100" height="100">
+// <circle r="15" data-name="first" stroke-linecap="round"/>
+// </svg>
+// <svg viewBox="0 0 50 50" width="50" height="50">
+// <title>Second SVG</title>
+// <circle r="15" data-name="second" stroke-linecap="round"/>
+// </svg>
+
 test('Fullfill a Promise', async t => {
   await t.notThrows(svgson(SVG))
 })
@@ -115,7 +177,16 @@ test('Wrap nodes in pathKey', async t => {
   const keys = Object.keys(res)
   t.true(keys.includes('paths'))
   t.deepEqual(res, {
-    paths: expected[0],
+    paths: expected,
+  })
+})
+
+test('Wrap nodes in pathKey with multiple input', async t => {
+  const res = await svgson(MULTIPLE_SVG, { pathsKey: 'paths' })
+  const keys = Object.keys(res)
+  t.true(keys.includes('paths'))
+  t.deepEqual(res, {
+    paths: expectedMultiple,
   })
 })
 
@@ -151,7 +222,7 @@ test('Adds custom attributes via transformNode', async t => {
   t.true(values.includes(false))
   t.deepEqual(
     res,
-    Object.assign({}, expected[0], {
+    Object.assign({}, expected, {
       foo: 'bar',
       test: false,
     })
