@@ -27,7 +27,9 @@ const svgson = function svgson(
   const applyFilters = input => {
     const applyTransformNode = node => {
       return node.name === 'root'
-        ? node.children.map(transformNode)
+        ? compat
+          ? node.childs.map(transformNode)
+          : node.children.map(transformNode)
         : transformNode(node)
     }
     let n

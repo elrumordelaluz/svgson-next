@@ -163,6 +163,11 @@ test('Returns an Array when input is more than one SVG', async t => {
   t.true(Array.isArray(res))
 })
 
+test('Works with Array and compat mode', async t => {
+  const res = await svgson(MULTIPLE_SVG, { compat: true })
+  t.true(Array.isArray(res))
+})
+
 test('Resulted nodes has basic keys', async t => {
   const res = await svgson(SVG)
   const keys = Object.keys(res)
