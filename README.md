@@ -27,7 +27,7 @@ yarn add svgson-next
 ## Usage
 
 ```js
-const svgson = require('svgson-next).default
+const svgson = require('svgson-next').default
 
 svgson(`<svg>
   <line
@@ -66,6 +66,12 @@ svgson(`<svg>
     ]
   }
 */
+```
+
+```js
+const { stringify } = require('svgson-next')
+
+stringify(parsed)
 ```
 
 ## API
