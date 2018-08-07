@@ -18,10 +18,96 @@
 [![Download](https://img.shields.io/npm/dm/svgson-next.svg)](https://npm-stat.com/charts.html?package=svgson-next)
 [![MIT License](https://img.shields.io/npm/l/svgson-next.svg)](https://opensource.org/licenses/MIT)
 
+## Install
+
 ```
 yarn add svgson-next
-
-# or
-
-npm i svgson-next
 ```
+
+## Usage
+
+```js
+const svgson = require('svgson-next).default
+
+svgson(`<svg>
+  <line
+    stroke= "#bada55"
+    stroke-width= "2"
+    stroke-linecap= "round"
+    x1= "70"
+    y1= "80"
+    x2= "250"
+    y2= "150">
+  </line>
+</svg>`)
+
+/*
+  {
+    name: 'svg',
+    type: 'element',
+    value: '',
+    attributes: {},
+    children: [
+      {
+        name: 'line',
+        type: 'element',
+        value: '',
+        attributes: {
+          stroke: '#bada55',
+          'stroke-width': '2',
+          'stroke-linecap': 'round',
+          x1: '70',
+          y1: '80',
+          x2: '250',
+          y2: '150'
+        },
+        children: []
+      }
+    ]
+  }
+*/
+```
+
+## API
+
+svgson(input, [options])
+
+#### input
+
+Type: `String`
+
+#### options
+
+Type: `Object`
+
+##### pathsKey
+
+Key to group parsed result into
+
+Type: `String`
+
+Default: ''
+
+##### transformNode
+
+Function to apply on each node when parsing
+
+Type: `Function`
+
+Default: node => node
+
+##### compat
+
+Use keys from previuos version of `svgson`
+
+Type: `Boolean`
+
+Default: false
+
+##### camelcase
+
+Apply `camelCase` into attributes
+
+Type: `Boolean`
+
+Default: false
