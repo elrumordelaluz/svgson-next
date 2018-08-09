@@ -74,6 +74,8 @@ const { stringify } = require('svgson-next')
 stringify(parsed)
 ```
 
+Test in browser [here](https://codepen.io/elrumordelaluz/full/XBKedz/)
+
 ## API
 
 svgson(input, [options])
