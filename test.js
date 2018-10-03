@@ -53,6 +53,21 @@ const expected = {
   ],
 }
 
+const expectedTransformed = {
+  tag: 'svg',
+  props: { width: '100', height: '100', viewBox: '0 0 100 100' },
+  children: [
+    {
+      tag: 'circle',
+      props: {
+        r: '15',
+        'data-name': 'stroke',
+        'stroke-linecap': 'round',
+      },
+    },
+  ],
+}
+
 const expectedOptimized = [
   {
     type: 'element',
@@ -142,14 +157,6 @@ const expectedMultiple = [
   },
 ]
 
-// <svg viewBox="0 0 100 100" width="100" height="100">
-// <circle r="15" data-name="first" stroke-linecap="round"/>
-// </svg>
-// <svg viewBox="0 0 50 50" width="50" height="50">
-// <title>Second SVG</title>
-// <circle r="15" data-name="second" stroke-linecap="round"/>
-// </svg>
-
 test('Fullfill a Promise', async t => {
   await t.notThrows(svgson(SVG))
 })
@@ -217,21 +224,16 @@ test('Optimize using custom config', async t => {
 
 test('Adds custom attributes via transformNode', async t => {
   const res = await svgson(SVG, {
-    transformNode: node => Object.assign({}, node, { foo: 'bar', test: false }),
+    transformNode: node => ({
+      tag: node.name,
+      props: node.attributes,
+      ...(node.children && node.children.length > 0
+        ? { children: node.children }
+        : {}),
+    }),
   })
-  const keys = Object.keys(res)
-  const values = Object.values(res)
-  t.true(keys.includes('foo'))
-  t.true(keys.includes('test'))
-  t.true(values.includes('bar'))
-  t.true(values.includes(false))
-  t.deepEqual(
-    res,
-    Object.assign({}, expected, {
-      foo: 'bar',
-      test: false,
-    })
-  )
+
+  t.deepEqual(res, expectedTransformed)
 })
 
 test.cb('Works in compat mode', t => {

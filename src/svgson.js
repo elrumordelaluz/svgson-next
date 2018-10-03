@@ -26,11 +26,19 @@ const svgson = function svgson(
 
   const applyFilters = input => {
     const applyTransformNode = node => {
+      const children = compat ? node.childs : node.children
       return node.name === 'root'
-        ? compat
-          ? node.childs.map(transformNode)
-          : node.children.map(transformNode)
-        : transformNode(node)
+        ? children.map(applyTransformNode)
+        : {
+            ...transformNode(node),
+            ...(children && children.length > 0
+              ? {
+                  [compat ? 'childs' : 'children']: children.map(
+                    applyTransformNode
+                  ),
+                }
+              : {}),
+          }
     }
     let n
     n = removeAttrs(input)
