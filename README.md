@@ -98,7 +98,7 @@ Default: ''
 
 ##### transformNode
 
-Function to apply on each node when parsing
+Function to apply on each node when parsing, useful when need to reshape nodes or set default attributes.
 
 Type: `Function`
 
