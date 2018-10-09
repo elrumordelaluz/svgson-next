@@ -8,7 +8,7 @@ branches:
 notifications:
   email: false
 node_js:
-  - '6'
+  - '8'
 script:
   - npm run cover
   - npm run build
