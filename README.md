@@ -119,3 +119,17 @@ Apply `camelCase` into attributes
 Type: `Boolean`
 
 Default: false
+
+## Related
+
+[svgson-cli](https://github.com/elrumordelaluz/svgson-cli) Transform SVG into `Object` from the Command Line
+
+[element-to-path](https://github.com/elrumordelaluz/element-to-path) Convert SVG element into `path`
+
+[path-that-svg](https://github.com/elrumordelaluz/path-that-svg) Convert entire SVG with `path`
+
+[svg-path-tools](https://github.com/elrumordelaluz/svg-path-tools) Tools to manipulate SVG `path` (d)
+
+## License
+
+MIT © [Lionel T](https://lionel.tzatzk.in)
