@@ -88,14 +88,6 @@ Type: `String`
 
 Type: `Object`
 
-##### pathsKey
-
-Key to group parsed result into
-
-Type: `String`
-
-Default: ''
-
 ##### transformNode
 
 Function to apply on each node when parsing, useful when need to reshape nodes or set default attributes.

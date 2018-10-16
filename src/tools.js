@@ -27,7 +27,7 @@ export const removeDoctype = input => {
 export const wrapInput = input => Promise.resolve(`<root>${input}</root>`)
 
 export const removeAttrs = obj => omitDeep(obj, ['parent'])
-export const wrapInKey = (key, node) => ({ [key]: node })
+
 export const addCustomAttrs = (attrs, node) => ({
   ...node,
   ...attrs,

@@ -184,24 +184,6 @@ test('Resulted nodes has basic keys', async t => {
   t.true(keys.includes('children'))
 })
 
-test('Wrap nodes in pathKey', async t => {
-  const res = await svgson(SVG, { pathsKey: 'paths' })
-  const keys = Object.keys(res)
-  t.true(keys.includes('paths'))
-  t.deepEqual(res, {
-    paths: expected,
-  })
-})
-
-test('Wrap nodes in pathKey with multiple input', async t => {
-  const res = await svgson(MULTIPLE_SVG, { pathsKey: 'paths' })
-  const keys = Object.keys(res)
-  t.true(keys.includes('paths'))
-  t.deepEqual(res, {
-    paths: expectedMultiple,
-  })
-})
-
 test('Optimize using default config', async t => {
   const optimized = await optimizeSVG(SVG, svgoDefaultConfig)
   const res = await svgson(optimized)

@@ -1,7 +1,6 @@
 import {
   parseInput,
   wrapInput,
-  wrapInKey,
   removeDoctype,
   removeAttrs,
   camelize,
@@ -11,12 +10,7 @@ import xmlPrint from 'xml-printer'
 
 const svgson = function svgson(
   input,
-  {
-    pathsKey = '',
-    transformNode = node => node,
-    compat = false,
-    camelcase = false,
-  } = {}
+  { transformNode = node => node, compat = false, camelcase = false } = {}
 ) {
   const wrapper = input => {
     const cleanInput = removeDoctype(input)
@@ -55,10 +49,7 @@ const svgson = function svgson(
   return wrapper(input)
     .then(parser)
     .then(applyFilters)
-    .then(r => {
-      const res = r.name === 'root' ? r.children : r
-      return pathsKey !== '' ? wrapInKey(pathsKey, res) : res
-    })
+    .then(res => (res.name === 'root' ? res.children : res))
 }
 
 const stringify = input => xmlPrint(input)
