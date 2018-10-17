@@ -27,7 +27,7 @@ yarn add svgson-next
 ## Usage
 
 ```js
-const svgson = require('svgson-next').default
+const svgson = require('svgson-next').parse
 
 svgson(`<svg>
   <line
@@ -39,7 +39,9 @@ svgson(`<svg>
     x2= "250"
     y2= "150">
   </line>
-</svg>`)
+</svg>`).then(function(json){
+  console.log(JSON.stringify(json, null, 2));
+})
 
 /*
   {
@@ -71,32 +73,40 @@ svgson(`<svg>
 ```js
 const { stringify } = require('svgson-next')
 
-stringify(parsed)
+mysvg = stringify(parsed)
+/* returns the SVG as string */
 ```
 
 Test in browser [here](https://codepen.io/elrumordelaluz/full/XBKedz/)
 
 ## API
 
-svgson(input, [options])
+svgson(input[, options])
 
-#### input
+Returns: `Promise`
+
+### input
 
 Type: `String`
 
-#### options
+### options
 
 Type: `Object`
 
-##### transformNode
+##### options.transformNode
 
 Function to apply on each node when parsing, useful when need to reshape nodes or set default attributes.
 
-Type: `Function`
+Type: `Function` that returns the node
 
-Default: node => node
+Default: 
+```js
+function(node){
+  return node
+}
+```
 
-##### compat
+##### options.compat
 
 Use keys from previuos version of `svgson`
 
@@ -104,7 +114,7 @@ Type: `Boolean`
 
 Default: false
 
-##### camelcase
+##### options.camelcase
 
 Apply `camelCase` into attributes
 
