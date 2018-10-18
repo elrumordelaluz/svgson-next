@@ -130,7 +130,7 @@ Returns: `Promise`
 svg = svgson.stringify(json)
 ```
 
-* **Prettifying** 
+* **Pretty Printing** 
 
   In order to generate pretty formatted SVG output, use [`pretty` npm module](https://www.npmjs.com/package/pretty): 
 
