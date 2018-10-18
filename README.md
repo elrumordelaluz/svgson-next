@@ -81,21 +81,21 @@ svgson.parse(`<svg>
 
 Test in browser [here](https://codepen.io/elrumordelaluz/full/XBKedz/)
 
-## API
+# API
 
-svgson(input[, options])
+## svgson.parse 
+
+```js
+svgson.parse(input[, options])
+```
 
 Returns: `Promise`
 
-### input
+* `input`
 
-Type: `String`
+  Type: `String`
 
-### options
-
-Type: `Object`
-
-##### options.transformNode
+* `options.transformNode`
 
 Function to apply on each node when parsing, useful when need to reshape nodes or set default attributes.
 
@@ -108,23 +108,24 @@ function(node){
 }
 ```
 
-##### options.compat
+* `options.compat`
 
 Use keys from previuos version of `svgson`
 
 Type: `Boolean`
 
-Default: false
+Default: `false`
 
-##### options.camelcase
+* `options.camelcase`
 
 Apply `camelCase` into attributes
 
 Type: `Boolean`
 
-Default: false
+Default: `false`
 
-## Related
+
+# Related
 
 [svgson-cli](https://github.com/elrumordelaluz/svgson-cli) Transform SVG into `Object` from the Command Line
 
