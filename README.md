@@ -91,38 +91,38 @@ svgson.parse(input[, options])
 
 Returns: `Promise`
 
-* `input`
+* **`input`**
 
-  Type: `String`
+    Type: `String`
 
-* `options.transformNode`
+* **`options.transformNode`**
 
-Function to apply on each node when parsing, useful when need to reshape nodes or set default attributes.
+    Function to apply on each node when parsing, useful when need to reshape nodes or set default attributes.
 
-Type: `Function` that returns the node
+    Type: `Function` that returns the node
 
-Default: 
-```js
-function(node){
-  return node
-}
-```
+    Default: 
+    ```js
+    function(node){
+      return node
+    }
+    ```
 
-* `options.compat`
+* **`options.compat`**
 
-Use keys from previuos version of `svgson`
+    Use keys from previuos version of `svgson`
 
-Type: `Boolean`
+    Type: `Boolean`
 
-Default: `false`
+    Default: `false`
 
-* `options.camelcase`
+* **`options.camelcase`**
 
-Apply `camelCase` into attributes
+    Apply `camelCase` into attributes
 
-Type: `Boolean`
+    Type: `Boolean`
 
-Default: `false`
+    Default: `false`
 
 
 # Related
