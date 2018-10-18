@@ -27,9 +27,12 @@ yarn add svgson-next
 ## Usage
 
 ```js
-const svgson = require('svgson-next').parse
+const svgson = require('svgson-next')
 
-svgson(`<svg>
+// ----------------------------
+// Convert SVG to JSON AST
+// ----------------------------
+svgson.parse(`<svg>
   <line
     stroke= "#bada55"
     stroke-width= "2"
@@ -41,40 +44,39 @@ svgson(`<svg>
   </line>
 </svg>`).then(function(json){
   console.log(JSON.stringify(json, null, 2));
+  /*
+    {
+      name: 'svg',
+      type: 'element',
+      value: '',
+      attributes: {},
+      children: [
+        {
+          name: 'line',
+          type: 'element',
+          value: '',
+          attributes: {
+            stroke: '#bada55',
+            'stroke-width': '2',
+            'stroke-linecap': 'round',
+            x1: '70',
+            y1: '80',
+            x2: '250',
+            y2: '150'
+          },
+          children: []
+        }
+      ]
+    }
+  */
+  
+  // -------------------------------
+  // Convert JSON AST back to SVG
+  // -------------------------------
+  mysvg = svgson.stringify(json)
+  /* returns the SVG as string */
 })
 
-/*
-  {
-    name: 'svg',
-    type: 'element',
-    value: '',
-    attributes: {},
-    children: [
-      {
-        name: 'line',
-        type: 'element',
-        value: '',
-        attributes: {
-          stroke: '#bada55',
-          'stroke-width': '2',
-          'stroke-linecap': 'round',
-          x1: '70',
-          y1: '80',
-          x2: '250',
-          y2: '150'
-        },
-        children: []
-      }
-    ]
-  }
-*/
-```
-
-```js
-const { stringify } = require('svgson-next')
-
-mysvg = stringify(parsed)
-/* returns the SVG as string */
 ```
 
 Test in browser [here](https://codepen.io/elrumordelaluz/full/XBKedz/)
