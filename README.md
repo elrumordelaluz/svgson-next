@@ -124,6 +124,21 @@ Returns: `Promise`
 
     Default: `false`
 
+## svgson.stringify
+
+```js
+svg = svgson.stringify(json)
+```
+
+* **Prettifying** 
+
+  In order to generate pretty formatted SVG output, use [`pretty` npm module](https://www.npmjs.com/package/pretty): 
+
+  ```js 
+  pretty = require('pretty')
+  formatted = pretty(svg)
+  ```
+
 
 # Related
 
