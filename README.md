@@ -27,9 +27,12 @@ yarn add svgson-next
 ## Usage
 
 ```js
-const svgson = require('svgson-next').default
+const svgson = require('svgson-next')
 
-svgson(`<svg>
+// ----------------------------
+// Convert SVG to JSON AST
+// ----------------------------
+svgson.parse(`<svg>
   <line
     stroke= "#bada55"
     stroke-width= "2"
@@ -39,80 +42,105 @@ svgson(`<svg>
     x2= "250"
     y2= "150">
   </line>
-</svg>`)
+</svg>`).then(function(json){
+  console.log(JSON.stringify(json, null, 2));
+  /*
+    {
+      name: 'svg',
+      type: 'element',
+      value: '',
+      attributes: {},
+      children: [
+        {
+          name: 'line',
+          type: 'element',
+          value: '',
+          attributes: {
+            stroke: '#bada55',
+            'stroke-width': '2',
+            'stroke-linecap': 'round',
+            x1: '70',
+            y1: '80',
+            x2: '250',
+            y2: '150'
+          },
+          children: []
+        }
+      ]
+    }
+  */
+  
+  // -------------------------------
+  // Convert JSON AST back to SVG
+  // -------------------------------
+  mysvg = svgson.stringify(json)
+  /* returns the SVG as string */
+})
 
-/*
-  {
-    name: 'svg',
-    type: 'element',
-    value: '',
-    attributes: {},
-    children: [
-      {
-        name: 'line',
-        type: 'element',
-        value: '',
-        attributes: {
-          stroke: '#bada55',
-          'stroke-width': '2',
-          'stroke-linecap': 'round',
-          x1: '70',
-          y1: '80',
-          x2: '250',
-          y2: '150'
-        },
-        children: []
-      }
-    ]
-  }
-*/
-```
-
-```js
-const { stringify } = require('svgson-next')
-
-stringify(parsed)
 ```
 
 Test in browser [here](https://codepen.io/elrumordelaluz/full/XBKedz/)
 
-## API
+# API
 
-svgson(input, [options])
+## svgson.parse 
 
-#### input
+```js
+svgson.parse(input[, options])
+```
 
-Type: `String`
+Returns: `Promise`
 
-#### options
+* **`input`**
 
-Type: `Object`
+    Type: `String`
 
-##### transformNode
+* **`options.transformNode`**
 
-Function to apply on each node when parsing, useful when need to reshape nodes or set default attributes.
+    Function to apply on each node when parsing, useful when need to reshape nodes or set default attributes.
 
-Type: `Function`
+    Type: `Function` that returns the node
 
-Default: node => node
+    Default: 
+    ```js
+    function(node){
+      return node
+    }
+    ```
 
-##### compat
+* **`options.compat`**
 
-Use keys from previuos version of `svgson`
+    Use keys from previuos version of `svgson`
 
-Type: `Boolean`
+    Type: `Boolean`
 
-Default: false
+    Default: `false`
 
-##### camelcase
+* **`options.camelcase`**
 
-Apply `camelCase` into attributes
+    Apply `camelCase` into attributes
 
-Type: `Boolean`
+    Type: `Boolean`
 
-Default: false
+    Default: `false`
 
-## Related
+## svgson.stringify
+
+```js
+svg = svgson.stringify(json)
+```
+
+* **Pretty Printing** 
+
+  In order to generate pretty formatted SVG output, use [`pretty` npm module](https://www.npmjs.com/package/pretty): 
+
+  ```js 
+  pretty = require('pretty')
+  formatted = pretty(svg)
+  ```
+
+
+# Related
 
 [svgson-cli](https://github.com/elrumordelaluz/svgson-cli) Transform SVG into `Object` from the Command Line
 
