@@ -25,7 +25,7 @@ const SVG =
   '<svg viewBox="0 0 100 100" width="100" height="100"><circle r="15" data-name="stroke" stroke-linecap="round"/></svg>'
 
 const SVG2 =
-  '<svg viewBox="0 0 100 100" width="100" height="100"><circle r="15" data-name="stroke" stroke-linecap="round" data-custom-data="{&amp;quot;foo&amp;quot;:{&amp;quot;bar&amp;quot;:&amp;quot;baz&amp;quot;}}"/></svg>'
+  '<svg viewBox="0 0 100 100" width="100" height="100"><circle r="15" data-name="stroke" stroke-linecap="round" data-custom-data="{&quot;foo&quot;:{&quot;bar&quot;:&quot;baz&quot;}}"/></svg>'
 
 const SVG_WITHOUT_WH =
   '<svg viewBox="0 0 100 100"><circle r="15" data-name="stroke" stroke-linecap="round"/></svg>'
@@ -260,6 +260,37 @@ test('Stringify using transformAttr', async t => {
           ? `${key}="${value}"`
           : `${key}="${escape(value)}"`
       },
+    })
+  )
+})
+
+const unescapeAttr = attr => {
+  return String(attr)
+    .replace(/&amp;/g, '&')
+    .replace(/&apos;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+}
+
+test('Parsing and Stringify attributes', async t => {
+  const res = await svgson(SVG2, {
+    transformNode: node => {
+      if (node.attributes['data-custom-data']) {
+        node.attributes['data-custom-data'] = JSON.parse(
+          unescapeAttr(node.attributes['data-custom-data'])
+        )
+      }
+      return node
+    },
+  })
+  t.is(
+    SVG2,
+    stringify(res, {
+      transformAttr: (key, value, escape) =>
+        `${key}="${escape(
+          /^data-custom/.test(key) ? JSON.stringify(value) : value
+        )}"`,
     })
   )
 })
