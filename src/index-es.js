@@ -1,3 +1,4 @@
-import { svgson, stringify } from './svgson'
+import svgson from './svgson'
+import stringify from './stringify'
 export default svgson
-export { stringify }
+export { stringify, svgson as parse }

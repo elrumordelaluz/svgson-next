@@ -6,7 +6,6 @@ import {
   camelize,
   applyCompat,
 } from './tools'
-import xmlPrint from 'xml-printer'
 
 const svgson = function svgson(
   input,
@@ -52,6 +51,4 @@ const svgson = function svgson(
     .then(res => (res.name === 'root' ? res.children : res))
 }
 
-const stringify = input => xmlPrint(input)
-
-export { svgson, stringify }
+export default svgson

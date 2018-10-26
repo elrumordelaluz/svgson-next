@@ -24,6 +24,12 @@ const optimizeSVG = (input, config) => {
 const SVG =
   '<svg viewBox="0 0 100 100" width="100" height="100"><circle r="15" data-name="stroke" stroke-linecap="round"/></svg>'
 
+const SVG2 =
+  '<svg viewBox="0 0 100 100" width="100" height="100"><circle r="15" data-name="stroke" stroke-linecap="round" data-custom-data="{&amp;quot;foo&amp;quot;:{&amp;quot;bar&amp;quot;:&amp;quot;baz&amp;quot;}}"/></svg>'
+
+const SVG_WITHOUT_WH =
+  '<svg viewBox="0 0 100 100"><circle r="15" data-name="stroke" stroke-linecap="round"/></svg>'
+
 const MULTIPLE_SVG = `
 <svg viewBox="0 0 100 100" width="100" height="100">
 <circle r="15" data-name="first" stroke-linecap="round"/>
@@ -242,6 +248,34 @@ test.cb('Applies camelCase', t => {
 test('Stringify', async t => {
   const res = await svgson(SVG)
   t.is(SVG, stringify(res))
+})
+
+test('Stringify using transformAttr', async t => {
+  const res = await svgson(SVG2)
+  t.is(
+    SVG2,
+    stringify(res, {
+      transformAttr: (key, value, escape) => {
+        return /^data-/.test(key)
+          ? `${key}="${value}"`
+          : `${key}="${escape(value)}"`
+      },
+    })
+  )
+})
+
+test('Stringify using transformAttr to remove Attributes conditionally', async t => {
+  const res = await svgson(SVG)
+  t.is(
+    SVG_WITHOUT_WH,
+    stringify(res, {
+      transformAttr: (key, value, escape, name) => {
+        return name === 'svg' && /(width|height)/.test(key)
+          ? null
+          : `${key}="${escape(value)}"`
+      },
+    })
+  )
 })
 
 test('Works with doctype', async t => {

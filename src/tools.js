@@ -59,3 +59,22 @@ export const toCamelCase = prop =>
   prop.replace(/[-|:]([a-z])/gi, (all, letter) => letter.toUpperCase())
 
 const notCamelcase = prop => /^(data|aria)(-\w+)/.test(prop)
+
+export const escapeText = text => {
+  if (text) {
+    const str = String(text)
+    return /[&<>]/.test(str)
+      ? `<![CDATA[${str.replace(/]]>/, ']]]]><![CDATA[>')}]]>`
+      : str
+  }
+  return ''
+}
+
+export const escapeAttr = attr => {
+  return String(attr)
+    .replace(/&/g, '&amp;')
+    .replace(/'/g, '&apos;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+}

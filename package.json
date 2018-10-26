@@ -37,7 +37,6 @@
     "clean-deep": "3.0.2",
     "deep-rename-keys": "^0.2.1",
     "omit-deep": "0.3.0",
-    "xml-printer": "1.1.3",
     "xml-reader": "2.4.3"
   },
   "devDependencies": {
