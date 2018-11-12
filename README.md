@@ -1,3 +1,7 @@
+### ❌ deprecated
+
+Use [svgson@3.x](https://github.com/elrumordelaluz/svgson) instead
+
 <p align="center">
   <img alt="svgson" title="svgson" src="https://cdn.rawgit.com/elrumordelaluz/svgson/7883b450/logo.svg" width="450">
 </p>
@@ -32,7 +36,9 @@ const svgson = require('svgson-next')
 // ----------------------------
 // Convert SVG to JSON AST
 // ----------------------------
-svgson.parse(`<svg>
+svgson
+  .parse(
+    `<svg>
   <line
     stroke= "#bada55"
     stroke-width= "2"
@@ -42,9 +48,11 @@ svgson.parse(`<svg>
     x2= "250"
     y2= "150">
   </line>
-</svg>`).then(function(json){
-  console.log(JSON.stringify(json, null, 2));
-  /*
+</svg>`
+  )
+  .then(function(json) {
+    console.log(JSON.stringify(json, null, 2))
+    /*
     {
       name: 'svg',
       type: 'element',
@@ -69,21 +77,20 @@ svgson.parse(`<svg>
       ]
     }
   */
-  
-  // -------------------------------
-  // Convert JSON AST back to SVG
-  // -------------------------------
-  mysvg = svgson.stringify(json)
-  /* returns the SVG as string */
-})
 
+    // -------------------------------
+    // Convert JSON AST back to SVG
+    // -------------------------------
+    mysvg = svgson.stringify(json)
+    /* returns the SVG as string */
+  })
 ```
 
 Test in browser [here](https://codepen.io/elrumordelaluz/full/XBKedz/)
 
 # API
 
-## svgson.parse 
+## svgson.parse
 
 ```js
 svgson.parse(input[, options])
@@ -91,38 +98,39 @@ svgson.parse(input[, options])
 
 Returns: `Promise`
 
-* **`input`**
+- **`input`**
 
-    Type: `String`
+  Type: `String`
 
-* **`options.transformNode`**
+- **`options.transformNode`**
 
-    Function to apply on each node when parsing, useful when need to reshape nodes or set default attributes.
+  Function to apply on each node when parsing, useful when need to reshape nodes or set default attributes.
 
-    Type: `Function` that returns the node
+  Type: `Function` that returns the node
 
-    Default: 
-    ```js
-    function(node){
-      return node
-    }
-    ```
+  Default:
 
-* **`options.compat`**
+  ```js
+  function(node){
+    return node
+  }
+  ```
 
-    Use keys from previuos version of `svgson`
+- **`options.compat`**
 
-    Type: `Boolean`
+  Use keys from previuos version of `svgson`
 
-    Default: `false`
+  Type: `Boolean`
 
-* **`options.camelcase`**
+  Default: `false`
 
-    Apply `camelCase` into attributes
+- **`options.camelcase`**
 
-    Type: `Boolean`
+  Apply `camelCase` into attributes
 
-    Default: `false`
+  Type: `Boolean`
+
+  Default: `false`
 
 ## svgson.stringify
 
@@ -130,15 +138,14 @@ Returns: `Promise`
 svg = svgson.stringify(json)
 ```
 
-* **Pretty Printing** 
+- **Pretty Printing**
 
-  In order to generate pretty formatted SVG output, use [`pretty` npm module](https://www.npmjs.com/package/pretty): 
+  In order to generate pretty formatted SVG output, use [`pretty` npm module](https://www.npmjs.com/package/pretty):
 
-  ```js 
+  ```js
   pretty = require('pretty')
   formatted = pretty(svg)
   ```
-
 
 # Related
 
